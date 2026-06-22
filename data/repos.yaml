@@ -1,0 +1,21 @@
+# One card per real, non-fork repo in the go-fsctl org.
+# kind = lib  -> a kernel-ioctl control library
+# ci   = true -> the repo has a working .github/workflows/ci.yml badge
+#               (all four verified live: loop, dm, btrfs, zfs).
+modules:
+  - name: loop
+    kind: lib
+    ci: true
+    desc: "Loop devices via <code>/dev/loop-control</code> and <code>LOOP_*</code> ioctls — attach, detach, query status and resize backing files. No <code>losetup</code>, no cgo."
+  - name: dm
+    kind: lib
+    ci: true
+    desc: "Device-mapper via <code>/dev/mapper/control</code> and <code>DM_*</code> ioctls — linear, striped, crypt, thin and verity targets with scrub-style status. No <code>dmsetup</code>."
+  - name: btrfs
+    kind: lib
+    ci: true
+    desc: "btrfs via <code>BTRFS_IOC_*</code> ioctls on directory fds — subvolumes, snapshots, scrub, balance, qgroups and send. No <code>btrfs(8)</code>."
+  - name: zfs
+    kind: lib
+    ci: true
+    desc: "OpenZFS via <code>/dev/zfs</code> and <code>ZFS_IOC_*</code> ioctls — pools, datasets, encryption, send/recv and clone. No <code>libzfs</code>, no cgo."

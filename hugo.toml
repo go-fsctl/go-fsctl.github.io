@@ -1,0 +1,8 @@
+baseURL = "https://go-fsctl.github.io/"
+[languages.en]
+  weight = 1
+title = "go-fsctl"
+disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]
+
+[markup.goldmark.renderer]
+  unsafe = true
