@@ -1,7 +1,7 @@
 # One card per real, non-fork repo in the go-fsctl org.
-# kind = lib  -> a kernel-ioctl control library
+# kind = lib  -> a kernel-ioctl / filesystem control library
 # ci   = true -> the repo has a working .github/workflows/ci.yml badge
-#               (all four verified live: loop, dm, btrfs, zfs).
+#               (all five verified live: loop, dm, btrfs, zfs, cowclone).
 modules:
   - name: loop
     kind: lib
@@ -19,3 +19,7 @@ modules:
     kind: lib
     ci: true
     desc: "OpenZFS via <code>/dev/zfs</code> and <code>ZFS_IOC_*</code> ioctls — pools, datasets, encryption, send/recv and clone. No <code>libzfs</code>, no cgo."
+  - name: cowclone
+    kind: lib
+    ci: true
+    desc: "Copy-on-write file cloning via APFS <code>clonefile(2)</code> and Linux <code>FICLONE</code> reflink (btrfs, XFS, OpenZFS 2.2+), with a transparent byte-copy fallback everywhere else. No cgo."
