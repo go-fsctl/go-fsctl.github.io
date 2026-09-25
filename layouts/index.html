@@ -24,7 +24,7 @@
         <a class="btn btn-primary" href="https://go-fsctl.github.io/docs/">Read the documentation →</a>
         <a class="btn btn-ghost" href="https://github.com/go-fsctl">Browse the modules</a>
       </div>
-      <div class="trust"><span><b>{{ len hugo.Data.repos.modules }}</b> independent modules</span><span><b>0</b> dependencies, no cgo</span><span><b>ioctl</b> not a subprocess</span></div>
+      <div class="trust"><span><b>{{ len .Site.Data.repos.modules }}</b> independent modules</span><span><b>0</b> dependencies, no cgo</span><span><b>ioctl</b> not a subprocess</span></div>
     </div>
     <div class="term">
       <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">cowclone — zsh</span></div>
@@ -50,8 +50,8 @@
     {{/* DERIVED. The list below used to carry a comment promising "one card
          per real repo in the org" while two modules were missing from it,
          so a typed count would have agreed with the wrong list. */}}
-    <span class="lead-line">{{ len hugo.Data.repos.modules }} modules — <b>each one usable on its own</b>, none of them importing another</span>
-    <div class="mods">{{ range hugo.Data.repos.modules }}<a href="https://github.com/go-fsctl/{{ .name }}">{{ .name }}</a>{{ end }}</div>
+    <span class="lead-line">{{ len .Site.Data.repos.modules }} modules — <b>each one usable on its own</b>, none of them importing another</span>
+    <div class="mods">{{ range .Site.Data.repos.modules }}<a href="https://github.com/go-fsctl/{{ .name }}">{{ .name }}</a>{{ end }}</div>
   </div></div>
 
   <section id="why"><div class="wrap">
@@ -62,7 +62,7 @@
       <div class="card"><div class="ico">⚙️</div><h3>No subprocess, no scraping</h3><p>No <code>losetup</code>, <code>dmsetup</code>, <code>btrfs(8)</code> or <code>libzfs</code> to install, and no output format to re-learn when it changes. A missing binary cannot break a program that never ran one.</p></div>
       <div class="card"><div class="ico">🧩</div><h3>Independent modules</h3><p>Each is its own Go module with no dependency on the others and none outside the standard library. Take <code>loop</code> without taking a filesystem stack.</p></div>
       <div class="card"><div class="ico">🚫</div><h3><code>CGO_ENABLED=0</code></h3><p>No C toolchain, so cross-compiling is the ordinary Go story and a static binary stays static. The kernel interface is a syscall, which Go can make by itself.</p></div>
-      <div class="card"><div class="ico">📐</div><h3>Coverage gated, not reported</h3><p>{{ len (where hugo.Data.repos.modules "gate" true) }} of {{ len hugo.Data.repos.modules }} modules fail CI under <b>100%</b> — a floor the workflow enforces rather than a number in a badge. <code>blk</code> is the exception: vet, tests, the race detector and cross-builds, without a coverage gate.</p></div>
+      <div class="card"><div class="ico">📐</div><h3>Coverage gated, not reported</h3><p>{{ len (where .Site.Data.repos.modules "gate" true) }} of {{ len .Site.Data.repos.modules }} modules fail CI under <b>100%</b> — a floor the workflow enforces rather than a number in a badge. <code>blk</code> is the exception: vet, tests, the race detector and cross-builds, without a coverage gate.</p></div>
       <div class="card"><div class="ico">💽</div><h3>Not only Linux</h3><p>The ioctl modules are Linux, as their subsystems are. <code>cowclone</code> also speaks APFS <code>clonefile(2)</code> on macOS and falls back to a byte copy anywhere else; <code>outdir</code> is portable.</p></div>
       <div class="card"><div class="ico">🗂️</div><h3>A guarantee, not a habit</h3><p><code>outdir</code> walks up for a <code>.git</code> and refuses to write inside a work tree, so a screen capture cannot land somewhere a <code>git add -A</code> would publish it. A <code>.gitignore</code> entry is a request; this is a refusal.</p></div>
     </div>
@@ -72,7 +72,7 @@
     <span class="eyebrow">The modules</span>
     <h2>Seven interfaces, seven modules.</h2>
     <div class="grid">
-      {{ range hugo.Data.repos.modules }}
+      {{ range .Site.Data.repos.modules }}
       <div class="card">
         <h3><a href="https://github.com/go-fsctl/{{ .name }}"><code>{{ .name }}</code></a> <span class="tag {{ if eq .kind "lib" }}ready{{ else }}active{{ end }}">{{ .kind }}</span></h3>
         <p>{{ .desc | safeHTML }}</p>
