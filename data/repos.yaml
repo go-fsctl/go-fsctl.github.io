@@ -8,7 +8,12 @@
 # that is missing here is missing everywhere, visibly.
 #
 # kind = lib   -> a kernel-ioctl / filesystem control library
-# kind = tool  -> a helper that is not a kernel interface
+#
+# ⛔ There is no "tool" kind any more. outdir was the only one, and it was
+# the only module here that opened nothing -- it moved to
+# github.com/go-appdirs/outdir, where the siblings it belongs with can join
+# it. A kind invented for a single exception is a sign the exception is in
+# the wrong place.
 # ci   = true  -> the repo really has .github/workflows/ci.yml (checked by
 #                 listing the tree, not by remembering)
 modules:
@@ -48,9 +53,3 @@ modules:
     gate: true
     os: "linux, darwin, and a byte-copy fallback everywhere else"
     desc: "Copy-on-write file cloning via APFS <code>clonefile(2)</code> and Linux <code>FICLONE</code> reflink (btrfs, XFS, OpenZFS 2.2+), with a transparent byte-copy fallback everywhere else. No cgo."
-  - name: outdir
-    kind: tool
-    ci: true
-    gate: true
-    os: "every platform Go builds for"
-    desc: "Choose a durable directory for a file that must never be committed — a screen capture, a camera frame, a log of somebody's data. Walks up for a <code>.git</code> and refuses to write inside a work tree, so the guarantee is code rather than a <code>.gitignore</code> entry."
