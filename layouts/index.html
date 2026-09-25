@@ -3,163 +3,93 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ .Site.Title }} — pure-Go Linux kernel-ioctl control</title>
-<meta name="description" content="Pure-Go Linux kernel-ioctl control libraries — drive loop devices, device-mapper, btrfs and ZFS straight through their kernel ioctl interfaces with no cgo and no shelling out.">
-<style>
-  :root {
-    --bg: #ffffff; --fg: #1b1f24; --muted: #57606a; --card: #f6f8fa;
-    --border: #d0d7de; --accent: #0079a8; --accent-fg: #ffffff;
-    --lib: #0079a8; --core: #9a6700;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme]) {
-      --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --card: #161b22;
-      --border: #30363d; --accent: #22cce2; --accent-fg: #0d1117;
-      --lib: #22cce2; --core: #d29922;
-    }
-  }
-  /* Forced dark (manual toggle). */
-  :root[data-theme="dark"] {
-      --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --card: #161b22;
-      --border: #30363d; --accent: #22cce2; --accent-fg: #0d1117;
-      --lib: #22cce2; --core: #d29922;
-  }
-  .theme-toggle {
-    position: fixed; top: 14px; right: 14px; z-index: 10;
-    font: inherit; font-size: .8rem; cursor: pointer; padding: 6px 12px;
-    color: var(--fg); background: var(--card); border: 1px solid var(--border); border-radius: 999px;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--fg);
-    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  }
-  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
-  header { padding: 72px 0 32px; text-align: center; }
-  .logo { width: 88px; height: 88px; margin: 0 auto 18px; display: block; }
-  h1 { font-size: 2.6rem; margin: 0 0 .3em; letter-spacing: -.02em; }
-  .tagline { font-size: 1.2rem; color: var(--muted); margin: 0 auto; max-width: 680px; }
-  .pills { margin: 22px 0 0; }
-  .pill {
-    display: inline-block; margin: 4px; padding: 3px 10px; font-size: .82rem;
-    color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 999px;
-  }
-  .cta { margin: 30px 0 0; }
-  .btn {
-    display: inline-block; padding: 10px 18px; margin: 4px; border-radius: 8px; text-decoration: none;
-    font-weight: 600; border: 1px solid var(--border);
-  }
-  .btn.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
-  .btn.ghost { color: var(--fg); background: transparent; }
-  .lead { color: var(--fg); max-width: 800px; margin: 8px auto 0; text-align: center; }
-  .lead code { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
-  .contract { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 4px 20px 18px; margin: 28px auto 0; max-width: 800px; }
-  .contract h2 { font-size: 1.25rem; margin: 18px 0 .2em; }
-  .contract p { color: var(--muted); margin: 0 0 .6em; }
-  .contract pre { overflow-x: auto; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin: 0; }
-  .contract code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .86rem; }
-  h2.section { text-align: center; margin: 44px 0 4px; font-size: 1.4rem; }
-  .sub { text-align: center; color: var(--muted); margin: 0 auto; max-width: 700px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding: 16px 0 8px; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; }
-  .card h3 { margin: 0 0 .35em; font-size: 1.2rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .card h3 a { text-decoration: none; }
-  .card p { margin: 0 0 .8em; color: var(--fg); font-size: .95rem; }
-  .card .badges { margin-top: auto; }
-  .card .badges img { height: 20px; vertical-align: middle; }
-  .kind { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); white-space: nowrap; }
-  .kind.lib { color: var(--lib); }
-  .kind.core { color: var(--core); }
-  .principles { color: var(--muted); text-align: center; padding: 10px 0 0; max-width: 820px; margin: 0 auto; }
-  footer { color: var(--muted); text-align: center; padding: 40px 0 56px; font-size: .9rem; }
-  a { color: var(--accent); }
-</style>
+<title>{{ .Site.Title }} — drive the kernel's storage interfaces from Go</title>
+<meta name="description" content="go-fsctl is a family of independent, dependency-free Go modules that drive storage subsystems straight through their kernel interfaces — loop devices, device-mapper, btrfs, OpenZFS, block-device ioctls, copy-on-write cloning. No losetup, dmsetup, btrfs(8) or libzfs; no C toolchain, no subprocess parsing. CGO_ENABLED=0.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<script>
-  // Set the saved theme before paint to avoid a flash; "system" leaves no attribute.
-  (function(){var m=localStorage.getItem('theme');if(m&&m!=='system')document.documentElement.setAttribute('data-theme',m);})();
-</script>
+{{ partial "styles.html" . }}
 </head>
-<body>
-  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light, dark or system theme"><span id="theme-label">🖥️ System</span></button>
-  <header class="wrap">
-    <img class="logo" src="/img/logo.svg" alt="go-fsctl logo" width="88" height="88">
-    <h1>go-fsctl</h1>
-    <p class="tagline">Pure-Go Linux <strong>kernel-ioctl control</strong> —
-      <strong>no cgo</strong>, <strong>no shelling out</strong>.</p>
-    <div class="pills">
-      <span class="pill">CGO_ENABLED=0</span>
-      <span class="pill">no CLI dependency</span>
-      <span class="pill">direct kernel ioctls</span>
-      <span class="pill">100% test coverage</span>
-      <span class="pill">6-arch CI</span>
-      <span class="pill">BSD-3-Clause</span>
-    </div>
-    <div class="cta">
-      <a class="btn primary" href="https://go-fsctl.github.io/docs/">Documentation</a>
-      <a class="btn ghost" href="https://github.com/go-fsctl">GitHub</a>
-    </div>
-  </header>
+<body class="lm">
+  <header class="nav"><div class="wrap">
+    <a class="brand" href="/"><img class="glyph" src="/img/logo.svg" width="32" height="32" alt="go-fsctl logo"> go-fsctl</a>
+    <nav><a href="#why">Why</a><a href="#modules">Modules</a><a href="#eco">Source</a></nav>
+    {{ partial "theme-toggle.html" . }}
+    <a class="btn btn-ghost" href="https://github.com/go-fsctl">GitHub</a>
+  </div></header>
 
-  <main class="wrap">
-    <p class="lead"><code>go-fsctl</code> is a family of independent, dependency-free Go modules that drive
-      Linux storage subsystems straight through their kernel <strong>ioctl</strong> interfaces — loop
-      devices, device-mapper, btrfs and OpenZFS. No <code>losetup</code>, <code>dmsetup</code>,
-      <code>btrfs(8)</code> or <code>libzfs</code>; no C toolchain, no subprocess parsing — just the
-      kernel and Go.</p>
-
-    <div class="contract">
-      <h2>Straight to the kernel</h2>
-      <p>Every module talks to the kernel the same way the reference CLIs do — by opening a control
-        device and issuing the subsystem's ioctls directly. No shelling out, no scraping
-        human-readable output, no cgo wrapper around a C library.</p>
-      <pre><code>// loop: attach a backing file via /dev/loop-control + LOOP_* ioctls
-dev, err := loop.Attach(ctx, "disk.img", loop.Options{ReadOnly: false})
-if err != nil {
-	return err
-}
-defer dev.Detach()
-fmt.Println(dev.Path()) // e.g. /dev/loop7</code></pre>
+  <div class="hero"><div class="wrap">
+    <div>
+      <h1 class="head">The kernel already<br><span class="accent">has an interface.</span></h1>
+      <p class="sub"><b>A CLI is not an API.</b> Driving storage by running <code>losetup</code>, <code>dmsetup</code>, <code>btrfs(8)</code> or <code>zfs</code> and reading what they print means parsing a human-readable format that was never promised to you, in a subprocess that may not be installed. Every module here opens the control device and issues the subsystem's ioctls — the same call the reference tool makes. Pure Go, <code>CGO_ENABLED=0</code>. BSD-3-Clause.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://go-fsctl.github.io/docs/">Read the documentation →</a>
+        <a class="btn btn-ghost" href="https://github.com/go-fsctl">Browse the modules</a>
+      </div>
+      <div class="trust"><span><b>{{ len hugo.Data.repos.modules }}</b> independent modules</span><span><b>0</b> dependencies, no cgo</span><span><b>ioctl</b> not a subprocess</span></div>
     </div>
+    <div class="term">
+      <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">cowclone — zsh</span></div>
+{{/* Real output, measured on this APFS volume. The df delta is the point:
+     du reports the clone's full logical size, so it says a gigabyte, while
+     the filesystem gave up no space at all. */}}
+<pre><span class="c-com"># clone a 512 MiB image on APFS</span>
+<span class="c-cmd">$ go run</span> ./clonedemo
+<span class="c-out">cloned 512 MiB in 381µs</span>
+<span class="c-out">clone.img is 512 MiB and independent</span>
 
-    <h2 class="section">Repositories</h2>
-    <p class="sub">One module per kernel subsystem. Each is pure Go with <code>CGO_ENABLED=0</code>,
-      100% test coverage and green CI across all six 64-bit architectures.</p>
-    <section class="grid">
-      {{ range site.Data.repos.modules }}
-      <article class="card">
-        <h3>
-          <a href="https://github.com/go-fsctl/{{ .name }}"><code>{{ .name }}</code></a>
-          <span class="kind {{ .kind }}">{{ .kind }}</span>
-        </h3>
+<span class="c-com"># du counts it twice — it cannot see shared blocks</span>
+<span class="c-cmd">$ du -sh</span> .
+<span class="c-out">1.0G</span>
+
+<span class="c-com"># the filesystem gave up nothing</span>
+<span class="c-cmd">$ df -k</span> . <span class="c-com"># before and after</span>
+<span class="c-key">delta: 0 MiB for a 512 MiB clone</span></pre>
+    </div>
+  </div></div>
+
+  <div class="strip"><div class="wrap">
+    {{/* DERIVED. The list below used to carry a comment promising "one card
+         per real repo in the org" while two modules were missing from it,
+         so a typed count would have agreed with the wrong list. */}}
+    <span class="lead-line">{{ len hugo.Data.repos.modules }} modules — <b>each one usable on its own</b>, none of them importing another</span>
+    <div class="mods">{{ range hugo.Data.repos.modules }}<a href="https://github.com/go-fsctl/{{ .name }}">{{ .name }}</a>{{ end }}</div>
+  </div></div>
+
+  <section id="why"><div class="wrap">
+    <span class="eyebrow">Why go-fsctl</span>
+    <h2>Straight to the kernel, and nothing in between.</h2>
+    <p class="lead">Every module talks to the kernel the way the reference CLI does — by opening a control device and issuing the subsystem's ioctls. What that removes is not just a dependency; it is a parser for output nobody promised to keep stable.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">⚙️</div><h3>No subprocess, no scraping</h3><p>No <code>losetup</code>, <code>dmsetup</code>, <code>btrfs(8)</code> or <code>libzfs</code> to install, and no output format to re-learn when it changes. A missing binary cannot break a program that never ran one.</p></div>
+      <div class="card"><div class="ico">🧩</div><h3>Independent modules</h3><p>Each is its own Go module with no dependency on the others and none outside the standard library. Take <code>loop</code> without taking a filesystem stack.</p></div>
+      <div class="card"><div class="ico">🚫</div><h3><code>CGO_ENABLED=0</code></h3><p>No C toolchain, so cross-compiling is the ordinary Go story and a static binary stays static. The kernel interface is a syscall, which Go can make by itself.</p></div>
+      <div class="card"><div class="ico">📐</div><h3>Coverage gated, not reported</h3><p>{{ len (where hugo.Data.repos.modules "gate" true) }} of {{ len hugo.Data.repos.modules }} modules fail CI under <b>100%</b> — a floor the workflow enforces rather than a number in a badge. <code>blk</code> is the exception: vet, tests, the race detector and cross-builds, without a coverage gate.</p></div>
+      <div class="card"><div class="ico">💽</div><h3>Not only Linux</h3><p>The ioctl modules are Linux, as their subsystems are. <code>cowclone</code> also speaks APFS <code>clonefile(2)</code> on macOS and falls back to a byte copy anywhere else; <code>outdir</code> is portable.</p></div>
+      <div class="card"><div class="ico">🗂️</div><h3>A guarantee, not a habit</h3><p><code>outdir</code> walks up for a <code>.git</code> and refuses to write inside a work tree, so a screen capture cannot land somewhere a <code>git add -A</code> would publish it. A <code>.gitignore</code> entry is a request; this is a refusal.</p></div>
+    </div>
+  </div></section>
+
+  <section id="modules" style="padding-top:10px"><div class="wrap">
+    <span class="eyebrow">The modules</span>
+    <h2>Seven interfaces, seven modules.</h2>
+    <div class="grid">
+      {{ range hugo.Data.repos.modules }}
+      <div class="card">
+        <h3><a href="https://github.com/go-fsctl/{{ .name }}"><code>{{ .name }}</code></a> <span class="tag {{ if eq .kind "lib" }}ready{{ else }}active{{ end }}">{{ .kind }}</span></h3>
         <p>{{ .desc | safeHTML }}</p>
-        {{ if .ci }}
-        <div class="badges">
-          <a href="https://github.com/go-fsctl/{{ .name }}/actions/workflows/ci.yml"><img src="https://github.com/go-fsctl/{{ .name }}/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-        </div>
-        {{ end }}
-      </article>
+        <p class="cap"><b>{{ .os }}</b>{{ if not .gate }} · no coverage gate{{ end }}</p>
+      </div>
       {{ end }}
-    </section>
-    <p class="principles">Every module is pure Go with <code>CGO_ENABLED=0</code> and drives the kernel
-      directly through ioctls — no <code>losetup</code>, <code>dmsetup</code>, <code>btrfs(8)</code> or
-      <code>libzfs</code>, and no subprocess output to parse. Each repo holds at 100% test coverage and
-      builds green on amd64, arm64, riscv64, loong64, ppc64le and s390x. BSD-3-Clause throughout.</p>
-  </main>
+    </div>
+  </div></section>
 
-  <footer class="wrap">
-    BSD-3-Clause · <a href="https://github.com/go-fsctl">github.com/go-fsctl</a> ·
-    Branding from <a href="https://github.com/go-fsctl/brand">go-fsctl/brand</a>
-  </footer>
-  <script>
-  (function(){
-    var order=['system','light','dark'], root=document.documentElement;
-    var labels={system:'🖥️ System',light:'☀️ Light',dark:'🌙 Dark'};
-    function apply(m){ if(m==='system'){root.removeAttribute('data-theme');}else{root.setAttribute('data-theme',m);} localStorage.setItem('theme',m); var el=document.getElementById('theme-label'); if(el)el.textContent=labels[m]; }
-    var mode=localStorage.getItem('theme')||'system'; apply(mode);
-    var btn=document.getElementById('theme-toggle');
-    if(btn) btn.addEventListener('click',function(){ mode=order[(order.indexOf(mode)+1)%order.length]; apply(mode); });
-  })();
-  </script>
+  <section id="eco" style="padding-top:6px"><div class="wrap">
+    <div class="band">
+      <h2>Storage control that ships like Go.</h2>
+      <p>No cgo, no C toolchain, no CLI to install, nothing outside the standard library. Each module is the kernel's own interface, in Go, and usable without the other six.</p>
+      <a class="btn btn-ghost" href="https://github.com/go-fsctl">Read the source on GitHub →</a>
+    </div>
+  </div></section>
+
+  <footer><div class="wrap"><span>© the go-fsctl authors · BSD-3-Clause</span><span>Pure Go · CGO_ENABLED=0 · no dependencies</span></div></footer>
 </body>
 </html>
