@@ -1,25 +1,56 @@
 # One card per real, non-fork repo in the go-fsctl org.
-# kind = lib  -> a kernel-ioctl / filesystem control library
-# ci   = true -> the repo has a working .github/workflows/ci.yml badge
-#               (all five verified live: loop, dm, btrfs, zfs, cowclone).
+#
+# ⛔ That sentence was already here, and was false: blk and outdir were
+# created after this file was last touched and neither appeared on the site
+# or in the docs, so two of seven modules were invisible to a reader. A
+# comment stating a rule does not keep the data to it. The count on the page
+# is derived from this list rather than typed beside it, so the next module
+# that is missing here is missing everywhere, visibly.
+#
+# kind = lib   -> a kernel-ioctl / filesystem control library
+# kind = tool  -> a helper that is not a kernel interface
+# ci   = true  -> the repo really has .github/workflows/ci.yml (checked by
+#                 listing the tree, not by remembering)
 modules:
   - name: loop
     kind: lib
     ci: true
+    gate: true
+    os: "linux"
     desc: "Loop devices via <code>/dev/loop-control</code> and <code>LOOP_*</code> ioctls — attach, detach, query status and resize backing files. No <code>losetup</code>, no cgo."
   - name: dm
     kind: lib
     ci: true
+    gate: true
+    os: "linux"
     desc: "Device-mapper via <code>/dev/mapper/control</code> and <code>DM_*</code> ioctls — linear, striped, crypt, thin and verity targets with scrub-style status. No <code>dmsetup</code>."
   - name: btrfs
     kind: lib
     ci: true
+    gate: true
+    os: "linux"
     desc: "btrfs via <code>BTRFS_IOC_*</code> ioctls on directory fds — subvolumes, snapshots, scrub, balance, qgroups and send. No <code>btrfs(8)</code>."
   - name: zfs
     kind: lib
     ci: true
+    gate: true
+    os: "linux"
     desc: "OpenZFS via <code>/dev/zfs</code> and <code>ZFS_IOC_*</code> ioctls — pools, datasets, encryption, send/recv and clone. No <code>libzfs</code>, no cgo."
+  - name: blk
+    kind: lib
+    ci: true
+    gate: false
+    os: "linux"
+    desc: "Block devices via <code>BLKGETSIZE64</code>, <code>BLKDISCARD</code>, <code>BLKZEROOUT</code>, <code>BLKPG</code> and the rest — size, block and I/O geometry, discard, and adding or removing partitions without re-reading the table."
   - name: cowclone
     kind: lib
     ci: true
+    gate: true
+    os: "linux, darwin, and a byte-copy fallback everywhere else"
     desc: "Copy-on-write file cloning via APFS <code>clonefile(2)</code> and Linux <code>FICLONE</code> reflink (btrfs, XFS, OpenZFS 2.2+), with a transparent byte-copy fallback everywhere else. No cgo."
+  - name: outdir
+    kind: tool
+    ci: true
+    gate: true
+    os: "every platform Go builds for"
+    desc: "Choose a durable directory for a file that must never be committed — a screen capture, a camera frame, a log of somebody's data. Walks up for a <code>.git</code> and refuses to write inside a work tree, so the guarantee is code rather than a <code>.gitignore</code> entry."
