@@ -1,0 +1,20 @@
+# Does this organisation advertise what it has?
+#
+# The logic lives once, in go-fleettools; this calls it. It needs no secret:
+# listing a public organisation is a public read.
+#
+# ⛔ It exists because this organisation is where the drift was found. blk and
+# outdir were created after the landing was last touched and appeared on none
+# of four surfaces, with outdir's documentation URL returning 404 for three
+# weeks. Nobody was careless: the four surfaces are edited by people who never
+# open the other three, which is what a check is for.
+name: docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  current:
+    uses: go-fleettools/fleettools/.github/workflows/docs-current.yml@main
