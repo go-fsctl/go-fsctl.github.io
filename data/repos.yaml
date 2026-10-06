@@ -53,3 +53,9 @@ modules:
     gate: true
     os: "linux, darwin, and a byte-copy fallback everywhere else"
     desc: "Copy-on-write file cloning via APFS <code>clonefile(2)</code> and Linux <code>FICLONE</code> reflink (btrfs, XFS, OpenZFS 2.2+), with a transparent byte-copy fallback everywhere else. No cgo."
+  - name: projquota
+    kind: lib
+    ci: true
+    gate: true
+    os: "linux"
+    desc: "Pure-Go Linux <b>project quotas</b> for XFS and ext4: give a directory tree a project id, limit its space and inodes, and read its usage, straight through the kernel — <code>FS_IOC_FSGETXATTR</code> / <code>FS_IOC_FSSETXATTR</code> and <code>quotactl_fd(2)</code> — with no cgo and no shelling out to <code>xfs_quota</code>, <code>setquota</code> or <code>chattr</code>."
