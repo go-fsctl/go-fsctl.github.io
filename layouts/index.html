@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ .Site.Title }} — drive the kernel's storage interfaces from Go</title>
-<meta name="description" content="go-fsctl is a family of independent, dependency-free Go modules that drive storage subsystems straight through their kernel interfaces — loop devices, device-mapper, btrfs, OpenZFS, block-device ioctls, copy-on-write cloning. No losetup, dmsetup, btrfs(8) or libzfs; no C toolchain, no subprocess parsing. CGO_ENABLED=0.">
+<meta name="description" content="go-fsctl is a family of independent Go modules, depending on nothing but golang.org/x/sys, that drive storage subsystems straight through their kernel interfaces — loop devices, device-mapper, btrfs, OpenZFS, block-device ioctls, copy-on-write cloning, XFS and ext4 project quotas. No losetup, dmsetup, btrfs(8) or libzfs; no C toolchain, no subprocess parsing. CGO_ENABLED=0.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 {{ partial "styles.html" . }}
 </head>
@@ -24,7 +24,7 @@
         <a class="btn btn-primary" href="https://go-fsctl.github.io/docs/">Read the documentation →</a>
         <a class="btn btn-ghost" href="https://github.com/go-fsctl">Browse the modules</a>
       </div>
-      <div class="trust"><span><b>{{ len .Site.Data.repos.modules }}</b> independent modules</span><span><b>0</b> dependencies, no cgo</span><span><b>ioctl</b> not a subprocess</span></div>
+      <div class="trust"><span><b>{{ len .Site.Data.repos.modules }}</b> independent modules</span><span><b>x/sys</b> the only dependency, no cgo</span><span><b>ioctl</b> not a subprocess</span></div>
     </div>
     <div class="term">
       <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t">cowclone — zsh</span></div>
@@ -60,7 +60,7 @@
     <p class="lead">Every module talks to the kernel the way the reference CLI does — by opening a control device and issuing the subsystem's ioctls. What that removes is not just a dependency; it is a parser for output nobody promised to keep stable.</p>
     <div class="grid">
       <div class="card"><div class="ico">⚙️</div><h3>No subprocess, no scraping</h3><p>No <code>losetup</code>, <code>dmsetup</code>, <code>btrfs(8)</code> or <code>libzfs</code> to install, and no output format to re-learn when it changes. A missing binary cannot break a program that never ran one.</p></div>
-      <div class="card"><div class="ico">🧩</div><h3>Independent modules</h3><p>Each is its own Go module with no dependency on the others and none outside the standard library. Take <code>loop</code> without taking a filesystem stack.</p></div>
+      <div class="card"><div class="ico">🧩</div><h3>Independent modules</h3><p>Each is its own Go module with no dependency on the others and none but <code>golang.org/x/sys</code>. Take <code>loop</code> without taking a filesystem stack.</p></div>
       <div class="card"><div class="ico">🚫</div><h3><code>CGO_ENABLED=0</code></h3><p>No C toolchain, so cross-compiling is the ordinary Go story and a static binary stays static. The kernel interface is a syscall, which Go can make by itself.</p></div>
       <div class="card"><div class="ico">📐</div><h3>Coverage gated, not reported</h3><p>{{ len (where .Site.Data.repos.modules "gate" true) }} of {{ len .Site.Data.repos.modules }} modules fail CI under <b>100%</b> — a floor the workflow enforces rather than a number in a badge. <code>blk</code> is the exception: vet, tests, the race detector and cross-builds, without a coverage gate.</p></div>
       <div class="card"><div class="ico">💽</div><h3>Not only Linux</h3><p>The ioctl modules are Linux, as their subsystems are. <code>cowclone</code> also speaks APFS <code>clonefile(2)</code> on macOS and falls back to a byte copy anywhere else, so one call works wherever the program runs.</p></div>
@@ -70,7 +70,8 @@
 
   <section id="modules" style="padding-top:10px"><div class="wrap">
     <span class="eyebrow">The modules</span>
-    <h2>Seven interfaces, seven modules.</h2>
+    {{/* DERIVED: this said "Seven" while the list held six (outdir had left). */}}
+    {{ $n := len .Site.Data.repos.modules }}<h2>{{ $n }} interfaces, {{ $n }} modules.</h2>
     <div class="grid">
       {{ range .Site.Data.repos.modules }}
       <div class="card">
@@ -85,11 +86,11 @@
   <section id="eco" style="padding-top:6px"><div class="wrap">
     <div class="band">
       <h2>Storage control that ships like Go.</h2>
-      <p>No cgo, no C toolchain, no CLI to install, nothing outside the standard library. Each module is the kernel's own interface, in Go, and usable without the other six.</p>
+      <p>No cgo, no C toolchain, no CLI to install, nothing but <code>golang.org/x/sys</code>. Each module is the kernel's own interface, in Go, and usable without the other {{ sub (len .Site.Data.repos.modules) 1 }}.</p>
       <a class="btn btn-ghost" href="https://github.com/go-fsctl">Read the source on GitHub →</a>
     </div>
   </div></section>
 
-  <footer><div class="wrap"><span>© the go-fsctl authors · BSD-3-Clause</span><span>Pure Go · CGO_ENABLED=0 · no dependencies</span></div></footer>
+  <footer><div class="wrap"><span>© the go-fsctl authors · BSD-3-Clause</span><span>Pure Go · CGO_ENABLED=0 · golang.org/x/sys only</span></div></footer>
 </body>
 </html>
