@@ -13,7 +13,7 @@
     <a class="brand" href="/"><img class="glyph" src="/img/logo.svg" width="32" height="32" alt="go-fsctl logo"> go-fsctl</a>
     <nav><a href="#why">Why</a><a href="#modules">Modules</a><a href="#eco">Source</a></nav>
     {{ partial "theme-toggle.html" . }}
-    <a class="btn btn-ghost" href="https://github.com/go-fsctl">GitHub</a>
+    <a class="btn btn-ghost" href="https://github.com/go-fsctl">{{ partial "icons/mark-github.html" . }}GitHub</a>
   </div></header>
 
   <div class="hero"><div class="wrap">
@@ -21,8 +21,8 @@
       <h1 class="head">The kernel already<br><span class="accent">has an interface.</span></h1>
       <p class="sub"><b>A CLI is not an API.</b> Driving storage by running <code>losetup</code>, <code>dmsetup</code>, <code>btrfs(8)</code> or <code>zfs</code> and reading what they print means parsing a human-readable format that was never promised to you, in a subprocess that may not be installed. Every module here opens the control device and issues the subsystem's ioctls — the same call the reference tool makes. Pure Go, <code>CGO_ENABLED=0</code>. BSD-3-Clause.</p>
       <div class="cta">
-        <a class="btn btn-primary" href="https://go-fsctl.github.io/docs/">Read the documentation →</a>
-        <a class="btn btn-ghost" href="https://github.com/go-fsctl">Browse the modules</a>
+        <a class="btn btn-primary" href="https://go-fsctl.github.io/docs/">{{ partial "icons/book.html" . }}Read the documentation →</a>
+        <a class="btn btn-ghost" href="https://github.com/go-fsctl">{{ partial "icons/package.html" . }}Browse the modules</a>
       </div>
       <div class="trust"><span><b>{{ len .Site.Data.repos.modules }}</b> independent modules</span><span><b>x/sys</b> the only dependency, no cgo</span><span><b>ioctl</b> not a subprocess</span></div>
     </div>
@@ -87,7 +87,7 @@
     <div class="band">
       <h2>Storage control that ships like Go.</h2>
       <p>No cgo, no C toolchain, no CLI to install, nothing but <code>golang.org/x/sys</code>. Each module is the kernel's own interface, in Go, and usable without the other {{ sub (len .Site.Data.repos.modules) 1 }}.</p>
-      <a class="btn btn-ghost" href="https://github.com/go-fsctl">Read the source on GitHub →</a>
+      <a class="btn btn-ghost" href="https://github.com/go-fsctl">{{ partial "icons/mark-github.html" . }}Read the source on GitHub →</a>
     </div>
   </div></section>
 
