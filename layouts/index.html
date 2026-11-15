@@ -22,10 +22,9 @@
   <div class="hero"><div class="wrap">
     <div>
       <h1 class="head">The kernel already<br><span class="accent">has an interface.</span></h1>
-      <p class="sub"><b>A CLI is not an API.</b> Driving storage by running <code>losetup</code>, <code>dmsetup</code>, <code>btrfs(8)</code> or <code>zfs</code> and reading what they print means parsing a human-readable format that was never promised to you, in a subprocess that may not be installed. Every module here opens the control device and issues the subsystem's ioctls — the same call the reference tool makes. Pure Go, <code>CGO_ENABLED=0</code>. BSD-3-Clause.</p>
-      <div class="cta">
-        <a class="btn btn-primary" href="https://go-fsctl.github.io/docs/">{{ partial "icons/book.html" . }}Read the documentation →</a>
-      </div>
+      <p class="sub"><b>A CLI is not an API.</b> Driving storage by running <code>losetup</code>, <code>dmsetup</code>, <code>btrfs(8)</code> or <code>zfs</code> and reading what they print means parsing a human-readable format that was never promised to you, in a subprocess that may not be installed. Every module here opens the control device and issues the subsystem's ioctls — the same call the reference tool makes. {{ if partial "mantra-on.html" . }}Go{{ else }}Pure Go{{ end }}, <code>{{ if not (partial "mantra-on.html" $) }}CGO_ENABLED=0{{ end }}</code>. {{ if not (partial "mantra-on.html" $) }}BSD-3-Clause{{ end }}.</p>
+      {{/* [[params.cta]] in hugo.toml: the kit renders the row */}}
+      {{ partial "cta.html" . }}
       <div class="trust"><span><b>{{ len .Site.Data.repos.modules }}</b> independent modules</span><span><b>x/sys</b> the only dependency, no cgo</span><span><b>ioctl</b> not a subprocess</span></div>
     </div>
     <div class="term">
@@ -63,7 +62,7 @@
     <div class="grid">
       <div class="card"><div class="ico">⚙️</div><h3>No subprocess, no scraping</h3><p>No <code>losetup</code>, <code>dmsetup</code>, <code>btrfs(8)</code> or <code>libzfs</code> to install, and no output format to re-learn when it changes. A missing binary cannot break a program that never ran one.</p></div>
       <div class="card"><div class="ico">🧩</div><h3>Independent modules</h3><p>Each is its own Go module with no dependency on the others and none but <code>golang.org/x/sys</code>. Take <code>loop</code> without taking a filesystem stack.</p></div>
-      <div class="card"><div class="ico">🚫</div><h3><code>CGO_ENABLED=0</code></h3><p>No C toolchain, so cross-compiling is the ordinary Go story and a static binary stays static. The kernel interface is a syscall, which Go can make by itself.</p></div>
+      {{ if not (partial "mantra-on.html" $) }}<div class="card"><div class="ico">🚫</div><h3><code>CGO_ENABLED=0</code></h3><p>No C toolchain, so cross-compiling is the ordinary Go story and a static binary stays static. The kernel interface is a syscall, which Go can make by itself.</p></div>{{ end }}
       <div class="card"><div class="ico">📐</div><h3>Coverage gated, not reported</h3><p>{{ len (where .Site.Data.repos.modules "gate" true) }} of {{ len .Site.Data.repos.modules }} modules fail CI under <b>100%</b> — a floor the workflow enforces rather than a number in a badge. <code>blk</code> is the exception: vet, tests, the race detector and cross-builds, without a coverage gate.</p></div>
       <div class="card"><div class="ico">💽</div><h3>Not only Linux</h3><p>The ioctl modules are Linux, as their subsystems are. <code>cowclone</code> also speaks APFS <code>clonefile(2)</code> on macOS and falls back to a byte copy anywhere else, so one call works wherever the program runs.</p></div>
       <div class="card"><div class="ico">🧪</div><h3>A test that cannot run says so</h3><p>The integration tests drive real kernel objects — <code>/dev/loop-control</code>, a device-mapper target — and <b>skip</b> when the device is absent or the process is not root, rather than passing against a mock. A green run on a machine without them is honest about what it did not prove.</p></div>
@@ -93,6 +92,6 @@
     </div>
   </div></section>
 
-  <footer><div class="wrap"><span>© the go-fsctl authors · BSD-3-Clause</span><span>Pure Go · CGO_ENABLED=0 · golang.org/x/sys only</span></div></footer>
+  <footer><div class="wrap"><span>© the go-fsctl authors{{ if not (partial "mantra-on.html" $) }} · BSD-3-Clause{{ end }}</span><span>{{ if not (partial "mantra-on.html" $) }}Pure Go · {{ end }}{{ if not (partial "mantra-on.html" $) }}CGO_ENABLED=0 · {{ end }}golang.org/x/sys only</span></div></footer>
 </body>
 </html>
